@@ -37,6 +37,8 @@ const STORY_INTRO =
 
 const STORY_TAGLINE = 'engineer · designer · storyteller'
 
+const STORY_LINKEDIN_URL = 'https://www.linkedin.com/in/sguglielmojr/'
+
 const PROJECT_TEASERS = [
   {
     id: 'sailup',
@@ -58,6 +60,7 @@ const PROJECT_TEASERS = [
         tech: 'Analytics views · voice-linked timelines',
       },
       publicAsset('images/projects/sailup/snapshot-3.png'),
+      publicAsset('images/projects/sailup/snapshot-4.png'),
       {
         kind: 'video',
         src: publicAsset('images/projects/sailup/sailup.mkv'),
@@ -657,9 +660,14 @@ function App() {
                 />
                 <p className="tab-story-intro">{STORY_INTRO}</p>
                 <p className="tab-story-tagline">{STORY_TAGLINE}</p>
-                <button type="button" className="tab-story-btn">
+                <a
+                  className="tab-story-btn"
+                  href={STORY_LINKEDIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Dive deeper
-                </button>
+                </a>
               </div>
             )}
 

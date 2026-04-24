@@ -173,14 +173,16 @@
 
 .tab-story {
   text-align: center;
-  max-width: 560px;
+  max-width: min(640px, 100%);
 }
 
 .tab-story-signature {
-  height: 48px;
+  height: clamp(88px, 14vw, 168px);
   width: auto;
-  margin: 0 auto 16px;
+  max-width: 100%;
+  margin: 0 auto 22px;
   display: block;
+  object-fit: contain;
 }
 
 .tab-story-intro {
@@ -205,6 +207,7 @@
 }
 
 .tab-story-btn {
+  display: inline-block;
   font-family: 'Orbitron', system-ui, sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -214,6 +217,7 @@
   color: #fff;
   border: none;
   cursor: pointer;
+  text-decoration: none;
   text-transform: uppercase;
   transition: opacity 0.2s;
 }
@@ -1305,15 +1309,17 @@
   /* Tab content: Story */
   .tab-story {
     text-align: center;
-    max-width: 480px;
+    max-width: min(560px, 100%);
     margin: 0 auto;
   }
 
   .tab-story-signature {
-    height: 48px;
+    height: clamp(80px, 18vw, 150px);
     width: auto;
-    margin: 0 auto 16px;
+    max-width: 100%;
+    margin: 0 auto 20px;
     display: block;
+    object-fit: contain;
   }
 
   .tab-story-intro {
@@ -1338,6 +1344,7 @@
   }
 
   .tab-story-btn {
+    display: inline-block;
     font-family: 'Orbitron', system-ui, sans-serif;
     font-size: 12px;
     font-weight: 600;
@@ -1347,6 +1354,7 @@
     color: #fff;
     border: none;
     cursor: pointer;
+    text-decoration: none;
     text-transform: uppercase;
     transition: opacity 0.2s;
   }
