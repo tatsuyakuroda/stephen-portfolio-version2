@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { Eye } from 'lucide-react'
 import { SkillsPage } from './components/skills/SkillsPage'
 import './App.css'
 
@@ -452,10 +453,18 @@ function ProjectDetailPanel({ detail, title, gallery = [], onBack }) {
             aria-haspopup="dialog"
             aria-expanded={galleryModalOpen}
             aria-controls={galleryDialogId}
-            aria-label={`Explore gallery: ${title}, ${total} screenshots and media`}
+            aria-label={`View gallery: ${title}, ${total} screenshots and media`}
           >
             <span className="project-detail-gallery-hit__overlay" aria-hidden>
-              <span className="project-detail-gallery-hit__hint">Explore →</span>
+              <span className="project-detail-gallery-hit__hint">
+                <Eye
+                  className="project-detail-gallery-hit__hint-icon"
+                  aria-hidden
+                  strokeWidth={2.25}
+                  size={20}
+                />
+                View
+              </span>
             </span>
           </button>
         </div>
