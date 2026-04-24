@@ -1,0 +1,785 @@
+.app {
+  min-height: 100svh;
+  background: #fff;
+  /* clip avoids horizontal bleed without breaking position: sticky on children */
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.layout {
+  position: relative;
+  min-height: 100svh;
+  background: #fff;
+}
+
+.sidebar {
+  position: fixed;
+  top: 50%;
+  left: 48px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fff;
+  z-index: 10;
+  max-height: calc(100svh - 32px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.nav-btn {
+  width: 280px;
+  padding: 24px 32px;
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #000;
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  text-align: left;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.nav-btn:hover {
+  box-shadow: 6px 6px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Sideways slide - use data-animation="slide" or "both" */
+.nav-btn[data-animation="slide"]:hover,
+.nav-btn[data-animation="both"]:hover {
+  transform: translateX(12px);
+}
+
+/* Text roll container - alarm picker style */
+.nav-btn-text {
+  display: block;
+  overflow: hidden;
+  height: 1.2em;
+  line-height: 1.2;
+}
+
+.nav-btn-text-track {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-btn-text-track span {
+  flex-shrink: 0;
+  height: 1.2em;
+  display: flex;
+  align-items: center;
+}
+
+/* Roll animation - use data-animation="roll" or "both" */
+.nav-btn[data-animation="roll"]:hover .nav-btn-text-track,
+.nav-btn[data-animation="both"]:hover .nav-btn-text-track {
+  transform: translateY(-50%);
+}
+
+.nav-btn-active {
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+}
+
+.mobile-layout {
+  display: block;
+  min-height: 100svh;
+  /* Keep tab content readable next to the absolute-positioned sidebar */
+  padding-left: 360px;
+  /* Used to center DESIGN portrait on the viewport, not only the right column */
+  --sidebar-gutter: 360px;
+}
+
+.canvas {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: #fff;
+  overflow: visible;
+}
+
+.nav-tabs,
+.nav-bottom {
+  display: none;
+}
+
+/* Visible on desktop so tab contents (e.g. SKILLS) show up */
+.tab-content {
+  display: block;
+  padding: 24px 48px;
+}
+
+/* ---------------------------
+   Tab content (desktop-first)
+   --------------------------- */
+/* DESIGN project cards duplicate sidebar links — hide that block on desktop */
+@media (min-width: 769px) {
+  .tab-content:has(.tab-design) {
+    display: none;
+  }
+}
+
+.project-teaser {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  padding: 16px;
+  background: #fff;
+  border: none;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  text-align: center;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-teaser:hover {
+  box-shadow: 3px 3px 16px rgba(0, 0, 0, 0.12);
+}
+
+.project-teaser-name {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #000;
+}
+
+.project-teaser-tag {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #666;
+  text-transform: none;
+}
+
+.tab-story {
+  text-align: center;
+  max-width: 560px;
+}
+
+.tab-story-signature {
+  height: 48px;
+  width: auto;
+  margin: 0 auto 16px;
+  display: block;
+}
+
+.tab-story-intro {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #000;
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 4;
+}
+
+.tab-story-tagline {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: #333;
+  margin: 0 0 20px;
+  text-transform: lowercase;
+}
+
+.tab-story-btn {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 12px 24px;
+  background: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+
+.tab-story-btn:hover {
+  opacity: 0.85;
+}
+
+.tab-skills {
+  padding: 0;
+  width: 100%;
+}
+
+.portrait {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* DESIGN hero — portrait anchored bottom; absolute + contain avoids cover crop */
+.canvas-design {
+  min-height: 100svh;
+}
+
+.canvas.canvas-design {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100svh;
+  overflow-x: hidden;
+  overflow-y: visible;
+  box-sizing: border-box;
+}
+
+/* Project open: no portrait; copy fills main canvas (layout already clears sidebar) */
+.canvas.canvas-design.canvas-design--project {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 100svh;
+  padding: clamp(24px, 4vh, 48px) clamp(24px, 4vw, 72px) clamp(40px, 6vh, 88px);
+  box-sizing: border-box;
+}
+
+.project-detail-panel {
+  max-width: min(720px, 100%);
+  width: 100%;
+  text-align: left;
+  max-height: min(88svh, 920px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.canvas-design .portrait {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(calc(-50% - (var(--sidebar-gutter, 0px) / 2)));
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(1360px, 104vw);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  object-fit: contain;
+  object-position: bottom center;
+  z-index: 0;
+}
+
+.branding {
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 200px;
+}
+
+.branding-signature {
+  height: 320px;
+  width: auto;
+  display: block;
+}
+
+.branding-tagline {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: #000;
+  margin: 0;
+  text-transform: lowercase;
+  text-align: right;
+  line-height: 1.5;
+}
+
+.branding-year {
+  font-family: 'Orbitron', monospace;
+  font-size: 64px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #000;
+  margin: 0;
+  line-height: 1;
+  text-align: right;
+}
+
+.branding-project-back {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #444;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 12px;
+  margin-bottom: 4px;
+  text-align: left;
+  width: auto;
+  transition: color 0.2s;
+}
+
+.branding-project-back:hover {
+  color: #000;
+}
+
+.branding-project-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(26px, 2.8vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #000;
+  margin: 0 0 10px;
+  line-height: 1.2;
+  text-transform: none;
+  text-align: left;
+}
+
+.branding-project-link {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #333;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.branding-project-link:hover {
+  color: #000;
+}
+
+.branding-project-headline {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: clamp(13px, 1.2vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.55;
+  color: #111;
+  margin: 0 0 16px;
+  text-align: left;
+}
+
+.branding-project-body {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 1.75;
+  color: #222;
+  margin: 0;
+  text-align: left;
+}
+
+.project-detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  margin-top: clamp(28px, 4vh, 48px);
+  width: 100%;
+}
+
+.project-detail-gallery-item {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f6f6f6;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.07);
+}
+
+.project-detail-gallery-item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  vertical-align: middle;
+}
+
+.project-detail-gallery-item--video {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.project-detail-gallery-item--video .project-detail-gallery-video {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 0;
+  background: #0a0a0a;
+}
+
+.project-detail-gallery-caption {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #555;
+  margin: 0;
+  text-align: left;
+}
+
+@media (max-width: 520px) {
+  .project-detail-gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Desktop only - canvas fills viewport */
+@media (min-width: 769px) {
+  .canvas:not(.canvas-design) {
+    min-height: auto;
+  }
+
+  /* Explicit height so the image actually uses ~90% of the viewport (max-height alone keeps intrinsic size smaller) */
+  .canvas-design .portrait {
+    height: 90svh;
+    max-height: 90svh;
+  }
+
+  /* Keep tab content readable; desktop portrait shouldn't push it off-screen */
+  .canvas-skills .portrait,
+  .canvas-story .portrait {
+    height: 52svh;
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .sidebar {
+    left: 24px;
+  }
+
+  .nav-btn {
+    width: 200px;
+    padding: 16px 24px;
+    font-size: 20px;
+  }
+
+  .branding {
+    right: 3%;
+  }
+
+  .branding-signature {
+    height: 200px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .layout {
+    display: block;
+    min-height: auto;
+  }
+
+  .app {
+    min-height: auto;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .mobile-layout {
+    padding-left: 0;
+    --sidebar-gutter: 0px;
+  }
+
+  .mobile-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+    gap: 0;
+  }
+
+  .canvas {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+  }
+
+  /* No full-viewport min-height here — absolute + min-height was leaving a huge gap above the image */
+  .canvas-design {
+    min-height: 0;
+  }
+
+  .canvas.canvas-design {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 0;
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    overflow-x: hidden;
+  }
+
+  .canvas.canvas-design.canvas-design--project {
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 0;
+    padding: 20px max(16px, env(safe-area-inset-left, 0px)) 24px
+      max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .canvas-design--project .project-detail-panel {
+    max-height: none;
+  }
+
+  /* In-flow on mobile so the hero only as tall as the image (no dead zone under the tabs) */
+  .canvas-design .portrait {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    height: auto;
+    width: auto;
+    max-width: 100%;
+    max-height: min(72vh, calc(100dvh - 88px - env(safe-area-inset-bottom, 0px)));
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  .canvas.canvas-story,
+  .canvas.canvas-skills {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 12px;
+    flex-shrink: 0;
+  }
+
+  .tab-content {
+    display: block;
+    flex: 1 1 auto;
+    padding: 24px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+    min-height: 0;
+  }
+
+  .nav-bottom {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    flex-shrink: 0;
+  }
+
+  .nav-tabs .nav-btn,
+  .nav-bottom .nav-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 12px;
+    font-size: 11px;
+    min-height: 40px;
+  }
+
+  .branding {
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+  }
+
+  .branding-signature {
+    height: 100px;
+  }
+
+  /* Tab content: Project teasers (DESIGN) — mobile only, one per row */
+  .tab-design .project-teasers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: none;
+  }
+
+  .project-teaser {
+    font-family: 'Orbitron', system-ui, sans-serif;
+    padding: 16px;
+    background: #fff;
+    border: none;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    text-align: center;
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .project-teaser:hover {
+    box-shadow: 3px 3px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .project-teaser-name {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #000;
+  }
+
+  .project-teaser-tag {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: #666;
+    text-transform: none;
+  }
+
+  /* Tab content: Story */
+  .tab-story {
+    text-align: center;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .tab-story-signature {
+    height: 48px;
+    width: auto;
+    margin: 0 auto 16px;
+    display: block;
+  }
+
+  .tab-story-intro {
+    font-family: 'Orbitron', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #000;
+    margin: 0 0 12px;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tab-story-tagline {
+    font-family: 'Orbitron', system-ui, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    color: #333;
+    margin: 0 0 20px;
+    text-transform: lowercase;
+  }
+
+  .tab-story-btn {
+    font-family: 'Orbitron', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 12px 24px;
+    background: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+  }
+
+  .tab-story-btn:hover {
+    opacity: 0.85;
+  }
+
+  .tab-skills {
+    padding: 0;
+    width: 100%;
+  }
+}
+
+/* Tall mobile */
+@media (max-width: 768px) and (min-height: 800px) {
+  .branding-signature {
+    height: 120px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .nav-right .nav-btn,
+  .nav-bottom .nav-btn {
+    padding: 6px 8px;
+    font-size: 10px;
+    min-height: 36px;
+  }
+
+  .nav-tabs,
+  .nav-bottom {
+    padding: 8px;
+  }
+
+  .tab-content {
+    padding: 20px 16px 24px;
+  }
+
+  .canvas-design .portrait {
+    max-height: min(68vh, calc(100dvh - 80px - env(safe-area-inset-bottom, 0px)));
+  }
+
+  .branding-signature {
+    height: 80px;
+  }
+}
+
+/* Extra small */
+@media (max-width: 360px) {
+  .nav-tabs .nav-btn {
+    min-width: 60px;
+    font-size: 9px;
+  }
+
+  .canvas-design .portrait {
+    max-height: min(64vh, calc(100dvh - 84px - env(safe-area-inset-bottom, 0px)));
+  }
+
+  .tab-story-intro {
+    font-size: 14px;
+  }
+}
+

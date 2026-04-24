@@ -1,0 +1,389 @@
+import { useState } from 'react'
+import { SkillsPage } from './components/skills/SkillsPage'
+import './App.css'
+
+/** Vite serves `public/` at site root; respects `base` in vite.config */
+function publicAsset(relativeFromRoot) {
+  const path = relativeFromRoot.replace(/^\//, '')
+  const base = import.meta.env.BASE_URL || '/'
+  return base.endsWith('/') ? `${base}${path}` : `${base}/${path}`
+}
+
+const GALLERY_PLACEHOLDER = publicAsset('images/projects/snapshot-placeholder.svg')
+
+const TABS = ['DESIGN', 'STORY', 'SKILLS']
+const PROJECTS = [
+  { id: 'sailup', name: 'SailUp' },
+  { id: 'cpphe', name: 'CPPHE' },
+  { id: 'simdin', name: 'SimDin' },
+  { id: 'tivvy', name: 'Tivvy' },
+]
+
+const SKILLS = [
+  { name: 'Machine Learning', level: 90 },
+  { name: 'TypeScript', level: 88 },
+  { name: 'System Design', level: 85 },
+  { name: 'UX Research', level: 82 },
+  { name: 'Data Pipelines', level: 80 },
+  { name: 'APIs & Integrations', level: 92 },
+]
+
+const STORY_INTRO =
+  'From code to canvas, strategy to systems — I build bridges between disciplines. Not a specialist. A connector.'
+
+const STORY_TAGLINE = 'engineer · designer · storyteller'
+
+const PROJECT_TEASERS = [
+  {
+    id: 'sailup',
+    name: 'SailUp',
+    tag: 'Real-time sailing performance',
+    gallery: [
+      publicAsset('images/projects/sailup/snapshot-1.png'),
+      publicAsset('images/projects/sailup/snapshot-2.png'),
+      publicAsset('images/projects/sailup/snapshot-3.png'),
+      {
+        kind: 'video',
+        src: publicAsset('images/projects/sailup/sailup.mkv'),
+        caption: 'Product walkthrough',
+      },
+    ],
+  },
+  {
+    id: 'cpphe',
+    name: 'CPPHE',
+    tag: 'Codebase transformation & AI',
+    gallery: [
+      publicAsset('images/projects/cpphe/snapshot-1.png'),
+      // publicAsset('images/projects/cpphe/snapshot-2.png'),
+      // publicAsset('images/projects/cpphe/snapshot-3.png'),
+      // publicAsset('images/projects/cpphe/snapshot-4.png'),
+    ],
+  },
+  {
+    id: 'simdin',
+    name: 'SimDin',
+    tag: 'Grocery planning & agents',
+    gallery: [
+      publicAsset('images/projects/simdin/snapshot-1.png'),
+      publicAsset('images/projects/simdin/snapshot-2.png'),
+      publicAsset('images/projects/simdin/snapshot-3.png'),
+      publicAsset('images/projects/simdin/snapshot-4.png'),
+    ],
+  },
+  {
+    id: 'tivvy',
+    name: 'Tivvy',
+    tag: 'Solana compliance platform',
+    gallery: [
+      publicAsset('images/projects/tivvy/photo_2026-04-24_06-00-33.jpg'),
+      publicAsset('images/projects/tivvy/photo_2026-04-24_06-00-45.jpg'),
+    ],
+  },
+]
+
+/** Normalize: string = image URL; objects use `kind: 'image' | 'video'` */
+function normalizeGalleryEntry(entry) {
+  if (typeof entry === 'string') return { kind: 'image', src: entry }
+  return entry
+}
+
+function galleryForProjectId(id) {
+  return PROJECT_TEASERS.find((t) => t.id === id)?.gallery ?? []
+}
+
+/** Copy for the DESIGN canvas when a project is selected */
+const PROJECT_DETAILS = {
+  sailup: {
+    link: { href: 'https://sailup.ai', label: 'sailup.ai' },
+    headline:
+      'Real-time performance system for competitive sailing teams',
+    body: 'SailUp is a data-driven coaching and communication platform that transforms sailing practices into measurable performance through live telemetry, voice coaching, and post-session analytics.',
+  },
+  cpphe: {
+    headline:
+      'End-to-End Platform for Codebase Transformation, Refactoring, and Intelligent Program Creation (Cloud + Local)',
+    body: 'AI system that takes existing codebases, rebuilds them into new applications, and continuously improves them across environments',
+  },
+  simdin: {
+    link: { href: 'https://simdin.ai/', label: 'simdin.ai' },
+    headline:
+      'Autonomous AI system for personalized grocery planning and execution',
+    body: 'SimDin is an agent-driven platform that transforms how individuals plan, shop, and manage food by combining conversational AI, preference learning, and real-world integrations into a seamless, continuously optimizing grocery and meal system.',
+  },
+  tivvy: {
+    link: { href: 'https://tivvy.ai', label: 'tivvy.ai' },
+    headline: 'Compliance Platform (Solana, Rust, Smart Contracts)',
+    body: 'Tivvy is a decentralized workplace compliance platform that automates drug testing, background checks, physical exams, and respirator fit testing for employers and collection sites.',
+  },
+}
+
+function NavButton({ label, onClick, isActive }) {
+  return (
+    <button
+      type="button"
+      className={`nav-btn ${isActive ? 'nav-btn-active' : ''}`}
+      data-animation="both"
+      onClick={onClick}
+    >
+      <span className="nav-btn-text">
+        <span className="nav-btn-text-track">
+          <span>{label}</span>
+          <span aria-hidden="true">{label}</span>
+        </span>
+      </span>
+    </button>
+  )
+}
+
+function ProjectDetailPanel({ detail, title, gallery = [], onBack }) {
+  if (!detail) return null
+  return (
+    <div className="project-detail-panel">
+      <button
+        type="button"
+        className="branding-project-back"
+        onClick={onBack}
+      >
+        Overview
+      </button>
+      <h2 className="branding-project-title">{title}</h2>
+      {detail.link ? (
+        <a
+          className="branding-project-link"
+          href={detail.link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {detail.link.label}
+        </a>
+      ) : null}
+      <p className="branding-project-headline">{detail.headline}</p>
+      <p className="branding-project-body">{detail.body}</p>
+      {gallery.length ? (
+        <div
+          className="project-detail-gallery"
+          aria-label={`${title} gallery — screenshots and media`}
+        >
+          {gallery.map((entry, i) => {
+            const item = normalizeGalleryEntry(entry)
+            const key = `${item.kind}-${item.src}-${i}`
+            const total = gallery.length
+
+            if (item.kind === 'video') {
+              return (
+                <figure
+                  key={key}
+                  className="project-detail-gallery-item project-detail-gallery-item--video"
+                >
+                  <video
+                    className="project-detail-gallery-video"
+                    controls
+                    playsInline
+                    preload="metadata"
+                    aria-label={item.caption ?? `${title} demo video`}
+                  >
+                    <source src={item.src} type="video/x-matroska" />
+                    <source src={item.src} />
+                  </video>
+                  {item.caption ? (
+                    <figcaption className="project-detail-gallery-caption">
+                      {item.caption}
+                    </figcaption>
+                  ) : null}
+                </figure>
+              )
+            }
+
+            return (
+              <figure key={key} className="project-detail-gallery-item">
+                <img
+                  src={item.src}
+                  alt={`${title} website snapshot ${i + 1} of ${total}`}
+                  loading="eager"
+                  decoding="async"
+                  onError={(e) => {
+                    const el = e.currentTarget
+                    if (el.dataset.fallback === '1') return
+                    el.dataset.fallback = '1'
+                    el.removeAttribute('srcset')
+                    el.src = GALLERY_PLACEHOLDER
+                  }}
+                />
+              </figure>
+            )
+          })}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function App() {
+  const [activeTab, setActiveTab] = useState('DESIGN')
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
+
+  const selectProject = (id) => {
+    setActiveTab('DESIGN')
+    setSelectedProjectId(id)
+  }
+
+  const clearProject = () => setSelectedProjectId(null)
+
+  const setTab = (label) => {
+    if (
+      label === 'DESIGN' &&
+      activeTab === 'DESIGN' &&
+      selectedProjectId
+    ) {
+      setSelectedProjectId(null)
+      return
+    }
+    setActiveTab(label)
+    if (label !== 'DESIGN') setSelectedProjectId(null)
+  }
+
+  const projectDetail =
+    selectedProjectId && PROJECT_DETAILS[selectedProjectId]
+      ? PROJECT_DETAILS[selectedProjectId]
+      : null
+
+  const selectedProjectTitle =
+    PROJECTS.find((x) => x.id === selectedProjectId)?.name ??
+    selectedProjectId
+
+  return (
+    <div className="app">
+      <div className="layout">
+        <nav className="sidebar">
+          {TABS.map((label) => (
+            <NavButton
+              key={label}
+              label={label}
+              isActive={activeTab === label}
+              onClick={() => setTab(label)}
+            />
+          ))}
+          {PROJECTS.map((p) => (
+            <NavButton
+              key={p.id}
+              label={p.name}
+              isActive={
+                activeTab === 'DESIGN' && selectedProjectId === p.id
+              }
+              onClick={() => selectProject(p.id)}
+            />
+          ))}
+        </nav>
+        <div className="mobile-layout">
+          <div className="nav-tabs">
+            {TABS.map((label) => (
+              <NavButton
+                key={label}
+                label={label}
+                isActive={activeTab === label}
+                onClick={() => setTab(label)}
+              />
+            ))}
+          </div>
+
+          <main
+            className={`canvas canvas-${activeTab.toLowerCase()}${
+              activeTab === 'DESIGN' && projectDetail
+                ? ' canvas-design--project'
+                : ''
+            }`}
+          >
+            {activeTab === 'DESIGN' && (
+              <>
+                {!projectDetail && (
+                  <img
+                    src="/images/stephen.png"
+                    alt="Stephen"
+                    className="portrait"
+                  />
+                )}
+                {projectDetail ? (
+                  <ProjectDetailPanel
+                    detail={projectDetail}
+                    title={selectedProjectTitle}
+                    gallery={galleryForProjectId(selectedProjectId)}
+                    onBack={clearProject}
+                  />
+                ) : (
+                  <aside className="branding">
+                    <img
+                      src="/images/sign.png"
+                      alt="Signature"
+                      className="branding-signature"
+                    />
+                    <p className="branding-tagline">
+                      the story of a generalist
+                    </p>
+                    <p className="branding-year">2026</p>
+                  </aside>
+                )}
+              </>
+            )}
+          </main>
+
+          <section className="tab-content">
+            {activeTab === 'DESIGN' && !projectDetail && (
+              <div className="tab-design">
+                <div className="project-teasers">
+                  {PROJECT_TEASERS.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      className="project-teaser"
+                      onClick={() => selectProject(p.id)}
+                    >
+                      <span className="project-teaser-name">{p.name}</span>
+                      <span className="project-teaser-tag">{p.tag}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'STORY' && (
+              <div className="tab-story">
+                <img
+                  src="/images/sign.png"
+                  alt="Signature"
+                  className="tab-story-signature"
+                />
+                <p className="tab-story-intro">{STORY_INTRO}</p>
+                <p className="tab-story-tagline">{STORY_TAGLINE}</p>
+                <button type="button" className="tab-story-btn">
+                  Dive deeper
+                </button>
+              </div>
+            )}
+
+            {activeTab === 'SKILLS' && (
+              <div className="tab-skills">
+                <SkillsPage />
+              </div>
+            )}
+          </section>
+
+          {activeTab !== 'DESIGN' && (
+            <div className="nav-bottom">
+              {PROJECTS.map((p) => (
+                <NavButton
+                  key={p.id}
+                  label={p.name}
+                  isActive={false}
+                  onClick={() => selectProject(p.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App
