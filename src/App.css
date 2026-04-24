@@ -222,6 +222,26 @@
   opacity: 0.85;
 }
 
+/* STORY tab — vertically center copy in the main column (empty canvas hidden) */
+.mobile-layout:has(.tab-story) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+.mobile-layout:has(.tab-story) .canvas.canvas-story {
+  display: none;
+}
+
+.mobile-layout:has(.tab-story) .tab-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
 .tab-skills {
   padding: 0;
   width: 100%;
