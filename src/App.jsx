@@ -481,6 +481,7 @@ function ProjectDetailPanel({
               sensitivity={180}
               sendToBackOnClick
               mobileClickOnly
+              mobileBreakpoint={901}
               cards={stackCards}
             />
           </div>
@@ -668,8 +669,15 @@ function App() {
             )}
           </section>
 
-          {activeTab !== 'DESIGN' ? (
-            <MobileProjectNav onSelectProject={selectProject} />
+          {activeTab !== 'DESIGN' || !projectDetail ? (
+            <MobileProjectNav
+              onSelectProject={selectProject}
+              className={
+                activeTab === 'DESIGN' && !projectDetail
+                  ? 'nav-bottom--design-home'
+                  : ''
+              }
+            />
           ) : null}
         </div>
       </div>

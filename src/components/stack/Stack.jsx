@@ -50,7 +50,7 @@ export default function Stack({
   autoplayDelay = 3000,
   pauseOnHover = false,
   mobileClickOnly = false,
-  mobileBreakpoint = 768,
+  mobileBreakpoint = 901,
 }) {
   const [isMobile, setIsMobile] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
