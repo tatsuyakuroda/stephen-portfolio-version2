@@ -94,8 +94,9 @@ const PROJECT_TEASERS = [
     name: 'Tivvy',
     tag: 'Solana compliance platform',
     gallery: [
-      publicAsset('images/projects/tivvy/photo_2026-04-24_06-00-33.jpg'),
-      publicAsset('images/projects/tivvy/photo_2026-04-24_06-00-45.jpg'),
+      publicAsset('images/projects/tivvy/snapshot-1.jpg'),
+      publicAsset('images/projects/tivvy/snapshot-2.jpg'),
+      publicAsset('images/projects/tivvy/snapshot-3.jpg'),
     ],
   },
 ]
