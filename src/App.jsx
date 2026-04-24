@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react'
-import { Eye } from 'lucide-react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import Stack from './components/stack/Stack'
 import { SkillsPage } from './components/skills/SkillsPage'
 import './App.css'
 
@@ -11,6 +11,9 @@ function publicAsset(relativeFromRoot) {
 }
 
 const GALLERY_PLACEHOLDER = publicAsset('images/projects/snapshot-placeholder.svg')
+
+/** Stack mount aspect; use the same 16:10 pixel size for every gallery file (e.g. 1920×1200) so layers align. */
+const GALLERY_STACK_ASPECT = '16 / 10'
 
 const TABS = ['DESIGN', 'STORY', 'SKILLS']
 const PROJECTS = [
@@ -84,7 +87,6 @@ const PROJECT_TEASERS = [
       publicAsset('images/projects/simdin/snapshot-1.png'),
       publicAsset('images/projects/simdin/snapshot-2.png'),
       publicAsset('images/projects/simdin/snapshot-3.png'),
-      publicAsset('images/projects/simdin/snapshot-4.png'),
     ],
   },
   {
@@ -400,6 +402,50 @@ function ProjectDetailPanel({
     }
   }, [galleryModalOpen, total])
 
+  const stackCards = useMemo(
+    () =>
+      gallery.map((entry, i) => {
+        const item = normalizeGalleryEntry(entry)
+        const key = `${item.kind}-${item.src}-${i}`
+        if (item.kind === 'video') {
+          return (
+            <div key={key} className="stack-card-fill stack-card-fill--gallery-slot">
+              <video
+                className="card-image"
+                muted
+                playsInline
+                preload="metadata"
+                aria-hidden
+                tabIndex={-1}
+              >
+                <source src={item.src} type="video/x-matroska" />
+                <source src={item.src} />
+              </video>
+            </div>
+          )
+        }
+        return (
+          <div key={key} className="stack-card-fill stack-card-fill--gallery-slot">
+            <img
+              src={item.src}
+              alt={`${title} preview ${i + 1}`}
+              className="card-image"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                const el = e.currentTarget
+                if (el.dataset.fallback === '1') return
+                el.dataset.fallback = '1'
+                el.removeAttribute('srcset')
+                el.src = GALLERY_PLACEHOLDER
+              }}
+            />
+          </div>
+        )
+      }),
+    [gallery, title],
+  )
+
   if (!detail) return null
 
   return (
@@ -425,84 +471,29 @@ function ProjectDetailPanel({
       <p className="branding-project-headline">{detail.headline}</p>
       <p className="branding-project-body">{detail.body}</p>
       {gallery.length ? (
-        <div className="project-detail-gallery-shell">
+        <div className="project-detail-gallery-shell project-detail-gallery-shell--stack">
           <div
-            className="project-detail-gallery"
-            aria-hidden="true"
+            className="project-detail-gallery-stack-mount"
+            style={{ aspectRatio: GALLERY_STACK_ASPECT }}
           >
-            {gallery.map((entry, i) => {
-              const item = normalizeGalleryEntry(entry)
-              const key = `${item.kind}-${item.src}-${i}`
-
-              if (item.kind === 'video') {
-                return (
-                  <figure
-                    key={key}
-                    className="project-detail-gallery-item project-detail-gallery-item--video"
-                  >
-                    <div className="project-detail-gallery-thumb">
-                      <video
-                        className="project-detail-gallery-video project-detail-gallery-video--thumb"
-                        muted
-                        playsInline
-                        preload="metadata"
-                        aria-hidden
-                        tabIndex={-1}
-                      >
-                        <source src={item.src} type="video/x-matroska" />
-                        <source src={item.src} />
-                      </video>
-                    </div>
-                    {item.caption ? (
-                      <figcaption className="project-detail-gallery-caption">
-                        {item.caption}
-                      </figcaption>
-                    ) : null}
-                  </figure>
-                )
-              }
-
-              return (
-                <figure key={key} className="project-detail-gallery-item">
-                  <div className="project-detail-gallery-thumb">
-                    <img
-                      src={item.src}
-                      alt=""
-                      loading="eager"
-                      decoding="async"
-                      onError={(e) => {
-                        const el = e.currentTarget
-                        if (el.dataset.fallback === '1') return
-                        el.dataset.fallback = '1'
-                        el.removeAttribute('srcset')
-                        el.src = GALLERY_PLACEHOLDER
-                      }}
-                    />
-                  </div>
-                </figure>
-              )
-            })}
+            <Stack
+              randomRotation
+              sensitivity={180}
+              sendToBackOnClick
+              mobileClickOnly
+              cards={stackCards}
+            />
           </div>
           <button
             type="button"
-            className="project-detail-gallery-hit"
+            className="project-detail-gallery-open"
             onClick={openGalleryModal}
             aria-haspopup="dialog"
             aria-expanded={galleryModalOpen}
             aria-controls={galleryDialogId}
             aria-label={`View gallery: ${title}, ${total} screenshots and media`}
           >
-            <span className="project-detail-gallery-hit__overlay" aria-hidden>
-              <span className="project-detail-gallery-hit__hint">
-                <Eye
-                  className="project-detail-gallery-hit__hint-icon"
-                  aria-hidden
-                  strokeWidth={2.25}
-                  size={20}
-                />
-                View
-              </span>
-            </span>
+            View full gallery
           </button>
         </div>
       ) : null}
