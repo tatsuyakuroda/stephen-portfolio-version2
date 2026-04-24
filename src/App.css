@@ -222,14 +222,17 @@
   opacity: 0.85;
 }
 
-/* STORY tab — vertically center copy in the main column (empty canvas hidden) */
-.mobile-layout:has(.tab-story) {
+/* STORY / SKILLS — full-height column; empty hero canvas hidden */
+.mobile-layout:has(.tab-story),
+.mobile-layout:has(.tab-skills) {
   display: flex;
   flex-direction: column;
   min-height: 100svh;
+  min-height: 100dvh;
 }
 
-.mobile-layout:has(.tab-story) .canvas.canvas-story {
+.mobile-layout:has(.tab-story) .canvas.canvas-story,
+.mobile-layout:has(.tab-skills) .canvas.canvas-skills {
   display: none;
 }
 
@@ -240,6 +243,17 @@
   align-items: center;
   justify-content: center;
   min-height: 0;
+}
+
+.mobile-layout:has(.tab-skills) .tab-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-height: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .tab-skills {
@@ -568,6 +582,24 @@
 .project-detail-gallery-hit:focus-visible .project-detail-gallery-hit__hint {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Touch: no hover — keep overlay + hint visible so “View” is discoverable */
+@media (hover: none) {
+  .project-detail-gallery-shell:hover,
+  .project-detail-gallery-shell:focus-within {
+    transform: none;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .project-detail-gallery-hit__overlay {
+    opacity: 0.42;
+  }
+
+  .project-detail-gallery-hit__hint {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -907,13 +939,13 @@
   .mobile-layout {
     padding-left: 0;
     --sidebar-gutter: 0px;
-  }
-
-  .mobile-layout {
     display: flex;
     flex-direction: column;
     min-height: auto;
     gap: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .canvas {
@@ -924,6 +956,9 @@
     padding: 0;
     margin: 0;
     min-height: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
     position: sticky;
     top: 0;
     z-index: 2;
@@ -952,10 +987,31 @@
     min-height: 0;
     padding: 20px max(16px, env(safe-area-inset-left, 0px)) 24px
       max(16px, env(safe-area-inset-right, 0px));
+    /* Long project reads better without sticky hero strip */
+    position: relative;
+    top: auto;
   }
 
   .canvas-design--project .project-detail-panel {
     max-height: none;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .project-detail-gallery-shell {
+    max-width: 100%;
+  }
+
+  /* Preview: one tile on phone; modal carousel still has every slide */
+  .project-detail-gallery-shell
+    .project-detail-gallery
+    > figure.project-detail-gallery-item:nth-of-type(n + 2) {
+    display: none;
+  }
+
+  .project-detail-gallery-shell .project-detail-gallery {
+    grid-template-columns: 1fr;
   }
 
   /* In-flow on mobile so the hero only as tall as the image (no dead zone under the tabs) */
@@ -1012,14 +1068,29 @@
   }
 
   .branding {
-    right: 5%;
+    right: max(12px, env(safe-area-inset-right, 0px));
     top: 50%;
     transform: translateY(-50%);
     padding: 0;
+    max-width: min(200px, 46vw);
+    min-width: 0;
   }
 
   .branding-signature {
-    height: 100px;
+    width: auto;
+    max-width: 100%;
+    max-height: min(100px, 22vh);
+    height: auto;
+    object-fit: contain;
+  }
+
+  .branding-tagline {
+    font-size: clamp(10px, 2.8vw, 16px);
+    letter-spacing: 0.12em;
+  }
+
+  .branding-year {
+    font-size: clamp(32px, 11vw, 64px);
   }
 
   /* Tab content: Project teasers (DESIGN) — mobile only, one per row */
@@ -1120,13 +1191,64 @@
   .tab-skills {
     padding: 0;
     width: 100%;
+    min-width: 0;
+  }
+
+  /* Gallery modal: fit small screens + touch targets */
+  .gallery-lightbox-backdrop {
+    padding: max(8px, env(safe-area-inset-top, 0px))
+      max(10px, env(safe-area-inset-right, 0px))
+      max(8px, env(safe-area-inset-bottom, 0px))
+      max(10px, env(safe-area-inset-left, 0px));
+  }
+
+  .gallery-lightbox {
+    width: 100%;
+    max-width: 100%;
+    max-height: min(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px), 920px);
+    border-radius: 12px;
+  }
+
+  .gallery-lightbox--carousel {
+    padding-top: 44px;
+  }
+
+  .gallery-carousel-main {
+    padding: 6px 6px 0;
+    gap: 4px;
+  }
+
+  .gallery-carousel-nav {
+    width: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    align-self: center;
+    font-size: 22px;
+  }
+
+  .gallery-lightbox-img,
+  .gallery-lightbox-video {
+    max-height: min(48dvh, 380px);
+  }
+
+  .gallery-lightbox-copy {
+    max-height: min(34vh, 280px);
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .gallery-carousel-dot {
+    width: 10px;
+    height: 10px;
+    padding: 16px;
+    box-sizing: content-box;
+    background-clip: content-box;
   }
 }
 
 /* Tall mobile */
 @media (max-width: 768px) and (min-height: 800px) {
   .branding-signature {
-    height: 120px;
+    max-height: 120px;
   }
 }
 
@@ -1153,7 +1275,7 @@
   }
 
   .branding-signature {
-    height: 80px;
+    max-height: 80px;
   }
 }
 

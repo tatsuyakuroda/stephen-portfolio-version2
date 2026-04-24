@@ -583,10 +583,6 @@ function App() {
                       alt="Signature"
                       className="branding-signature"
                     />
-                    <p className="branding-tagline">
-                      the story of a generalist
-                    </p>
-                    <p className="branding-year">2026</p>
                   </aside>
                 )}
               </>
