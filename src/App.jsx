@@ -173,6 +173,36 @@ function NavButton({ label, onClick, isActive }) {
   )
 }
 
+/** Mobile: project chips (hidden on desktop via .nav-bottom base rule) */
+function MobileProjectNav({
+  onSelectProject,
+  currentProjectId = null,
+  hideCurrent = false,
+  className = '',
+}) {
+  const projects =
+    hideCurrent && currentProjectId
+      ? PROJECTS.filter((p) => p.id !== currentProjectId)
+      : PROJECTS
+
+  return (
+    <div
+      className={`nav-bottom nav-bottom--project-switch${className ? ` ${className}` : ''}`}
+      role="navigation"
+      aria-label="Projects"
+    >
+      {projects.map((p) => (
+        <NavButton
+          key={p.id}
+          label={p.name}
+          isActive={!hideCurrent && currentProjectId === p.id}
+          onClick={() => onSelectProject(p.id)}
+        />
+      ))}
+    </div>
+  )
+}
+
 function GalleryCarouselModal({
   gallery,
   detail,
@@ -326,7 +356,14 @@ function GalleryCarouselModal({
   )
 }
 
-function ProjectDetailPanel({ detail, title, gallery = [], onBack }) {
+function ProjectDetailPanel({
+  detail,
+  title,
+  gallery = [],
+  onBack,
+  projectId,
+  onSelectProject,
+}) {
   const [galleryModalOpen, setGalleryModalOpen] = useState(false)
   const [carouselIndex, setCarouselIndex] = useState(0)
   const closeBtnRef = useRef(null)
@@ -469,6 +506,14 @@ function ProjectDetailPanel({ detail, title, gallery = [], onBack }) {
           </button>
         </div>
       ) : null}
+      {onSelectProject && projectId ? (
+        <MobileProjectNav
+          onSelectProject={onSelectProject}
+          currentProjectId={projectId}
+          hideCurrent
+          className="nav-bottom--after-gallery"
+        />
+      ) : null}
       <GalleryCarouselModal
         gallery={gallery}
         detail={detail}
@@ -575,6 +620,8 @@ function App() {
                     title={selectedProjectTitle}
                     gallery={galleryForProjectId(selectedProjectId)}
                     onBack={clearProject}
+                    projectId={selectedProjectId}
+                    onSelectProject={selectProject}
                   />
                 ) : (
                   <aside className="branding">
@@ -630,18 +677,9 @@ function App() {
             )}
           </section>
 
-          {activeTab !== 'DESIGN' && (
-            <div className="nav-bottom">
-              {PROJECTS.map((p) => (
-                <NavButton
-                  key={p.id}
-                  label={p.name}
-                  isActive={false}
-                  onClick={() => selectProject(p.id)}
-                />
-              ))}
-            </div>
-          )}
+          {activeTab !== 'DESIGN' ? (
+            <MobileProjectNav onSelectProject={selectProject} />
+          ) : null}
         </div>
       </div>
     </div>

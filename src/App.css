@@ -671,7 +671,8 @@
 }
 
 .gallery-carousel-main {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(44px, auto) minmax(0, 1fr) minmax(44px, auto);
   align-items: center;
   gap: 8px;
   width: 100%;
@@ -680,17 +681,15 @@
 }
 
 .gallery-carousel-media {
-  flex: 1;
   min-width: 0;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .gallery-carousel-nav {
-  flex-shrink: 0;
   width: 44px;
   min-height: 100px;
-  align-self: stretch;
+  align-self: center;
   border: none;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.06);
@@ -795,7 +794,6 @@
 }
 
 .gallery-lightbox-media {
-  flex: 0 1 auto;
   min-height: 0;
   background: #0a0a0a;
   display: flex;
@@ -805,16 +803,17 @@
 
 .gallery-lightbox-img,
 .gallery-lightbox-video {
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   max-height: min(58dvh, 560px);
   height: auto;
   object-fit: contain;
   display: block;
+  margin-inline: auto;
 }
 
 .gallery-lightbox-video {
   max-height: min(58dvh, 560px);
-  width: 100%;
 }
 
 .gallery-lightbox-copy {
@@ -1058,6 +1057,23 @@
     flex-shrink: 0;
   }
 
+  /* Project chips (mobile): STORY/SKILLS strip above safe area */
+  .nav-bottom--project-switch:not(.nav-bottom--after-gallery) {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /* Case study: other projects only, below gallery — three in one row */
+  .nav-bottom--after-gallery {
+    margin-top: clamp(14px, 2.8vh, 24px);
+    padding-top: clamp(12px, 2vh, 18px);
+    padding-bottom: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
   .nav-tabs .nav-btn,
   .nav-bottom .nav-btn {
     width: 100%;
@@ -1065,6 +1081,12 @@
     padding: 8px 12px;
     font-size: 11px;
     min-height: 40px;
+  }
+
+  .nav-bottom--after-gallery .nav-btn {
+    font-size: clamp(9px, 2.6vw, 11px);
+    padding: 8px 4px;
+    letter-spacing: 0.04em;
   }
 
   .branding {
@@ -1214,6 +1236,7 @@
   }
 
   .gallery-carousel-main {
+    grid-template-columns: minmax(48px, auto) minmax(0, 1fr) minmax(48px, auto);
     padding: 6px 6px 0;
     gap: 4px;
   }
