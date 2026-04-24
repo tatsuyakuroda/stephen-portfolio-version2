@@ -19,6 +19,9 @@ body {
   min-height: 100svh;
   background: #fff;
   overflow-x: hidden;
+  /* Ensure vertical pan scroll isn’t suppressed by implicit overflow chains */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 #root {
